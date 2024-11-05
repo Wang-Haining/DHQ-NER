@@ -1,3 +1,4 @@
+import pandas as pd
 from vllm import LLM, SamplingParams
 
 
@@ -60,10 +61,11 @@ outputs = llm.chat(
     use_tqdm=True
 )
 
-generated_text = outputs[0].outputs[0].text
-print(generated_text)
+outputs.to_parquet('annotated_output.parquet')
+# generated_text = outputs[0].outputs[0].text
+# print(generated_text)
 
-with open('annotated_output.xml', 'w') as f:
-    f.write(generated_text)
+# with open('annotated_output.txt', 'w') as f:
+#     f.write(generated_text)
 
-print("Annotated TEI file saved as 'annotated_output.xml'.")
+# print("Annotated TEI file saved as 'annotated_output.txt'.")
