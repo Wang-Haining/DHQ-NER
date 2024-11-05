@@ -54,15 +54,16 @@ llm = LLM(model=hf_model,
 tei_file = open('000760_without_names.xml', 'r').read()
 conversation = create_conversation(tei_file)
 
-output = llm.chat(
+outputs = llm.chat(
     messages=conversation,
     sampling_params=sampling_params,
     use_tqdm=True
 )
 
-print(list(output))
+generated_text = outputs[0].outputs[0].text
+print(generated_text)
 
 with open('annotated_output.xml', 'w') as f:
-    f.write(output)
+    f.write(generated_text)
 
 print("Annotated TEI file saved as 'annotated_output.xml'.")
