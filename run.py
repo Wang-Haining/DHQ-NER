@@ -63,6 +63,6 @@ output = llm.chat(
 print(output)
 
 with open('annotated_output.xml', 'w') as f:
-    f.write(output.text)
+    f.write(output)
 
 print("Annotated TEI file saved as 'annotated_output.xml'.")
