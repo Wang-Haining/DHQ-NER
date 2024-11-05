@@ -45,6 +45,7 @@ sampling_params = SamplingParams(temperature=0.6, top_p=0.95,
                                  max_tokens=1024*10)
 
 llm = LLM(model=hf_model,
+          device='cuda',
           tensor_parallel_size=1,
           # dtype='bf16'
           )
