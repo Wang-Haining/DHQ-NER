@@ -1,4 +1,4 @@
-import pandas as pd
+import pickle
 from vllm import LLM, SamplingParams
 
 
@@ -55,13 +55,16 @@ llm = LLM(model=hf_model,
 tei_file = open('000760_without_names.xml', 'r').read()
 conversation = create_conversation(tei_file)
 
-outputs = llm.chat(
+output = llm.chat(
     messages=conversation,
     sampling_params=sampling_params,
     use_tqdm=True
 )
 
-outputs.to_parquet('annotated_output.parquet')
+with open('output.pkl', 'wb') as f:
+    pickle.dump(output, f)
+
+# outputs.to_parquet('annotated_output.parquet')
 # generated_text = outputs[0].outputs[0].text
 # print(generated_text)
 
