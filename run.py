@@ -60,7 +60,7 @@ output = llm.chat(
     use_tqdm=True
 )
 
-print(output)
+print(list(output))
 
 with open('annotated_output.xml', 'w') as f:
     f.write(output)
