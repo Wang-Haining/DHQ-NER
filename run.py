@@ -21,13 +21,15 @@ Process Pipeline:
                           - Content Integrity
 
 Usage:
-    python run.py -i input.xml -o output.xml [-v] [-f]
+    python run.py -i input.xml -o output.xml [-t] [-p] [-v] [-f]
 
 Options:
-    -i, --input   Input TEI XML file path
-    -o, --output  Output annotated file path
-    -v, --verbose Print processing details
-    -f, --force   Save output even if validation fails
+    -i, --input        Input TEI XML file path
+    -o, --output       Output annotated file path
+    -t, --temperature  Temperature for sampling (0.01-1.0, lower = more rigid)
+    -p, --force        Top-p sampling parameter (0.0-1.0, lower = more selective)
+    -v, --verbose      Print processing details
+    -f, --force        Save output even if validation fails
 """
 
 import argparse
@@ -180,6 +182,20 @@ def main():
         action="store_true",
         help="Save output even if validation fails",
     )
+    parser.add_argument(
+        "-t",
+        "--temperature",
+        type=float,
+        default=0.1,
+        help="Temperature for sampling (0.01-1.0, lower = more rigid)"
+    )
+    parser.add_argument(
+        "-p",
+        "--top_p",
+        type=float,
+        default=0.8,
+        help="Top-p sampling parameter (0.0-1.0, lower = more selective)"
+    )
     args = parser.parse_args()
 
     # sanity check
@@ -194,7 +210,9 @@ def main():
     try:
         hf_model = "meta-llama/Llama-3.1-8B-Instruct"
         sampling_params = SamplingParams(
-            temperature=0.6, top_p=0.95, max_tokens=1024 * 10
+            temperature=args.temperature,
+            top_p=args.top_p,
+            max_tokens=1024 * 15
         )
 
         llm = LLM(model=hf_model, device="cuda", tensor_parallel_size=1)
