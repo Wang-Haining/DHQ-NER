@@ -42,6 +42,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 from xml.etree.ElementTree import ParseError
 
+from torch import manual_seed
 from vllm import LLM, SamplingParams
 
 SYSTEM_PROMPT = """You are a named entity recognition (NER) assistant designed to annotate TEI XML files. Your task is to identify and annotate named entities (persons, organizations, and locations) using the <name> element without specifying the type attribute. Follow these instructions:
@@ -282,4 +283,6 @@ def main():
 
 
 if __name__ == "__main__":
+    manual_seed(42)
+
     exit(main())
