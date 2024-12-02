@@ -1,8 +1,33 @@
 """
-A TEI XML Named Entity Recognition (NER) processor that uses llama3.1 to identify and
-annotate named entities while preserving all other content and markup and ensuring
-document integrity. It validates that only NER annotations are modified through
-post-processing text diff.
+A TEI XML Named Entity Recognition (NER) processor that uses LLaMA 3.1 to identify and
+annotate named entities while preserving document integrity. The processor follows a
+multi-stage pipeline:
+
+Process Pipeline:
+    Input XML                Output XML
+        |                        ↑
+        |                        |
+        ↓                        |
+    Load Document               Save
+        |                        ↑
+        |                        |
+        ↓                    Validation
+    LLaMA Model ----→ NER ----→ Phase
+                   generation    |
+                                 |
+                          [Checks for]
+                          - XML Structure
+                          - Tag Balance
+                          - Content Integrity
+
+Usage:
+    python run.py -i input.xml -o output.xml [-v] [-f]
+
+Options:
+    -i, --input   Input TEI XML file path
+    -o, --output  Output annotated file path
+    -v, --verbose Print processing details
+    -f, --force   Save output even if validation fails
 """
 
 import argparse
@@ -90,7 +115,7 @@ def validate_changes(original: str, generated: str) -> ValidationResult:
     Comprehensive validation of the generated TEI document.
 
     Checks:
-    1. Idempotency (only NER tags added)
+    1. Content integrity (only NER tags added)
     2. XML validity
     3. Tag balance
     4. Entity distribution
@@ -114,10 +139,10 @@ def validate_changes(original: str, generated: str) -> ValidationResult:
     else:
         result.add_message(f"✓ Found {tag_counts['opening_tags']} balanced NER tags")
 
-    # check idempotency
+    # check content integrity
     masked_generated = mask_ner_tags(generated)
     if original == masked_generated:
-        result.add_message("✓ Idempotency check passed")
+        result.add_message("✓ Content integrity check passed")
     else:
         result.add_message("✗ Unexpected modifications found:", is_error=True)
         differ = difflib.Differ()
